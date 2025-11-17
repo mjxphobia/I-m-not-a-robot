@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>마패 상태 확인</title>
+<style>
+  :root{
+    --W: 820px;          /* 페이지 최대 너비 */
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --line: #e5e7eb;
+    --fg: #111827;
+    --muted:#6b7280;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:system-ui,"Noto Sans KR",sans-serif;
+    line-height:1.6;
+  }
+  main{
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .wrap{
+    width:min(92vw,var(--W));
+    margin:0 auto;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 16px 22px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    text-align:center;
+  }
+  .hero{
+    margin:4px auto 16px;
+    display:flex;
+    justify-content:center;
+  }
+  .hero img{
+    display:block;
+    width:80%;
+    max-width:480px;
+    height:auto;
+    border-radius:12px;
+  }
+  .text{
+    white-space:pre-line;
+    margin:8px 0 14px;
+    text-align:center;
+  }
+  .row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:8px;
+  }
+  input[type="text"]{
+    width:min(520px, 80vw);
+    padding:12px 14px;
+    font-size:16px;
+    border-radius:12px;
+    color:var(--fg);
+    background:#f9fafb;
+    border:1px solid var(--line);
+    outline:none;
+    text-align:center;
+  }
+  .btn{
+    padding:12px 22px;
+    border-radius:12px;
+    font-weight:800;
+    cursor:pointer;
+    color:#111827;
+    background:#fde68a;
+    border:1px solid #92400e;
+    transition:.12s;
+  }
+  .btn:hover{
+    filter:brightness(1.03);
+    transform:translateY(-1px);
+  }
+  .btn:active{
+    transform:translateY(0);
+  }
+
+  [hidden]{display:none !important;}
+
+  @media (max-width:480px){
+    .card{padding:16px 12px 18px;}
+    input[type="text"]{width:100%;}
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="wrap">
+
+    <!-- 1번째 화면 -->
+    <section id="p1" class="card">
+      <div class="hero">
+        <img src="static/burn.png" alt="burn">
+      </div>
+      <div class="row">
+        <input id="answer1" type="text"
+               placeholder="마패의 상태는..."
+               autocomplete="off">
+        <button class="btn" onclick="handleSubmit()">작성</button>
+      </div>
+    </section>
+
+    <!-- 2번째 화면 -->
+    <section id="p2" class="card" hidden>
+      <div class="hero">
+        <img src="static/remake.png" alt="remake">
+      </div>
+      
+      <div class="row">
+        <button class="btn" onclick="show('p1')">처음으로</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  const pages = ["p1","p2"];
+
+  function show(id){
+    pages.forEach(pid => {
+      const el = document.getElementById(pid);
+      if (el) el.hidden = (pid !== id);
+    });
+    if(id === "p1"){
+      setTimeout(() => document.getElementById("answer1").focus(), 50);
+    }
+    window.scrollTo({top:0, behavior:"instant"});
+  }
+
+  function normalize(s){
+    return (s || "")
+      .toLowerCase()
+      .replace(/\s+/g,"");   // 공백 제거
+  }
+
+  function handleSubmit(){
+    const raw = document.getElementById("answer1").value;
+    const s   = normalize(raw);
+
+    if(s === "burn"){
+      show("p2");
+    } else {
+      alert("기록이 맞지 않는 것 같다...");
+      show("p1");
+    }
+  }
+
+  // 엔터로도 제출
+  document.getElementById("answer1").addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") handleSubmit();
+  });
+
+  // 시작 페이지
+  show("p1");
+</script>
+</body>
+</html>
